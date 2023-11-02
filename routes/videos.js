@@ -1,38 +1,48 @@
 const express = require('express');
 const router = express.Router();
 const data = require('../data/data.json')
+const fs = require('fs')
+
+
+
+
+
+let readData = () => {
+    const realReadData = JSON.parse(fs.readFileSync('./data/data.json'))
+    return realReadData;
+}
 
 router.route('/').get((_req, res) => {
     const smallData = data.map(obj => ({
         id: obj.id,
         title: obj.title,
         channel: obj.channel,
+        image: obj.image,
     }))
     res.json(smallData)
-
-
 });
 
-router.post("/", (req, res) => {
+router.post("/upload", (req, res) => {
     res.status(200).send(req.body);
     console.log(req.body)
-    // create a new video, add that new video object to the data 
     const newVideo = {       
             
-            "id": "84e96018-4022-434e-80bf-000ce4cd12b8",
+            "id": "400",
             ...req.body,
             "channel": "User Channel",
-            "image": "https://i.imgur.com/l2Xfgpl.jpg",
+            "image": "",
             "views": "1,000,000",
             "likes": "100,000",
             "duration": "5:00",
             "video": "https://project-2-api.herokuapp.com/stream",
-            "timestamp": 1926032763000,
+            "timestamp": Date.now(),
             "comments": [
             ]
-    }
-
-
+        }
+    let allData = readData();
+    allData.push(newVideo)
+    let a = JSON.stringify(allData) 
+    fs.writeFileSync('./data/data.json', a)
 });
 
 router.get('/:id', (req, res) => {
@@ -44,19 +54,5 @@ router.get('/:id', (req, res) => {
     }
     res.json(video);
 });
-
-// router.post("/", (req, res) => {
-//     console.log(req.body);
-//     res.send('you did');
-// //   try {
-// //     const clientVideo = req.body;
-// //     let newVideo = "Test Video";
-// //     console.log(newVideo);
-// //     console.log("test");
-// //     res.send(clientVideo);
-// //   } catch {
-// //     console.error(error);
-// //   }
-// });
 
 module.exports = router;
