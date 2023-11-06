@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const data = require("../data/data.json");
 const fs = require("fs");
+const uuid = require('uuid');
+
 
 let readData = () => {
   const realReadData = JSON.parse(fs.readFileSync("./data/data.json"));
@@ -18,11 +20,12 @@ router.route("/").get((_req, res) => {
   res.json(smallData);
 });
 
+
 router.post("/upload", (req, res) => {
   res.status(200).send(req.body);
   console.log(req.body);
   const newVideo = {
-    id: "400",
+    id: uuid.v4(),
     ...req.body,
     channel: "User Channel",
     image: "",
